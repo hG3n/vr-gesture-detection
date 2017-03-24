@@ -1,4 +1,4 @@
-from skimage import color, io
+from skimage import color, io, transform
 from scipy import misc
 import matplotlib.pyplot as plt
 from sklearn import datasets, svm, metrics
@@ -17,11 +17,22 @@ def main():
 
     digits = datasets.load_digits()
 
-    print(digits.images[0])
-    print(d[0])
-
+    # 8bit subplot
+    plt.subplot(1,2,1)
     plt.imshow(d[0], cmap=plt.cm.gray_r)
+    plt.title("8bit")
+
+    # 4bit subplot
+    plt.subplot(1,2,2)
+    plt.imshow(d[0]/16, cmap=plt.cm.gray_r)
+    plt.title("4bit")
+
+    # show the plot
     plt.show()
+
+    foo = list(zip(digits.images, digits.target))
+    print(foo[0])
+
 
 
 def load_dataset(file, slice_size, size_exponent):
@@ -35,7 +46,7 @@ def load_dataset(file, slice_size, size_exponent):
     # load image atlas as greyscale
     circle_path = IMAGE_PATH + file
     print("loading image: %s" % circle_path)
-    atlas = misc.imread(circle_path, mode='L')
+    atlas = io.imread(circle_path, as_grey=True)
 
     # check atlas size
     rows = atlas.shape[0]
@@ -54,8 +65,10 @@ def load_dataset(file, slice_size, size_exponent):
     # define new size and resize images
     new_size = (2 ** size_exponent, 2**size_exponent)
     for i in range(0, len(segmented_images)):
-        segmented_images[i] = misc.imresize(segmented_images[i], new_size, mode="F") / 16
+        # segmented_images[i] = transform.resize(segmented_images[i], new_size)
+        segmented_images[i] = misc.imresize(segmented_images[i], new_size)
 
+    ## return segmented image array
     return segmented_images
 
 
