@@ -1,2 +1,3 @@
 *.kra
 *.pyc
+__pycache__

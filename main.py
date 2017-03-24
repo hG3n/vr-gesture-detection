@@ -1,75 +1,78 @@
-from skimage import color, io, transform
-from scipy import misc
+import numpy as np
 import matplotlib.pyplot as plt
-from sklearn import datasets, svm, metrics
 
-# globals
-IMAGE_PATH = "data/"
+from scipy import misc
+from skimage import io
+from os import path, listdir
 
+from lib.ShapeDetector import ShapeDetector
+from lib.Dataset import Dataset
+
+SIZE_EXPONENT = 3
+SLICE_SIZE = 200
 
 def main():
-    d = load_dataset('circle.jpeg', 200, 3)
-    d2 = load_dataset('triangle.jpeg', 200, 3)
+    # load samples
+    samples = load_samples("samples", SIZE_EXPONENT)
+    samples_flattened = samples.reshape((len(samples), -1))
 
-    # for item in d:
-    #     plt.imshow(item, cmap=plt.cm.gray_r, interpolation='nearest')
-    #     plt.show()
+    # load datasets, learn, predict
+    datasets = load_datasets("data/datasets")
+    s = ShapeDetector(datasets)
+    p = s.predict(samples_flattened)
 
-    digits = datasets.load_digits()
-
-    # 8bit subplot
-    plt.subplot(1,2,1)
-    plt.imshow(d[0], cmap=plt.cm.gray_r)
-    plt.title("8bit")
-
-    # 4bit subplot
-    plt.subplot(1,2,2)
-    plt.imshow(d[0]/16, cmap=plt.cm.gray_r)
-    plt.title("4bit")
-
-    # show the plot
+    # print results
+    for index, prediction in enumerate(p):
+        plt.subplot(1, len(p), index + 1)
+        plt.imshow(samples[index], cmap=plt.cm.gray_r)
+        plt.title(prediction)
     plt.show()
 
-    foo = list(zip(digits.images, digits.target))
-    print(foo[0])
 
-
-
-def load_dataset(file, slice_size, size_exponent):
+def load_datasets(directory):
     """
-    load images from file and return dataset
-    :param file:
-    :param slice_size:
-    :param size_exponent:
+    load datasets
+    :param directory:
     :return:
     """
-    # load image atlas as greyscale
-    circle_path = IMAGE_PATH + file
-    print("loading image: %s" % circle_path)
-    atlas = io.imread(circle_path, as_grey=True)
+    files = [f for f in listdir(directory)]
 
-    # check atlas size
-    rows = atlas.shape[0]
-    cols = atlas.shape[1]
-    if (rows % slice_size != 0 or cols % slice_size != 0):
-        print("ERROR: wrong image dimensions, should be multiple of 200")
-        return
+    # load file
+    sets = []
+    for file in files:
+        # extract target name from file name
+        target_name = file.split("_")[0]
+        filepath = path.join(directory, file)
 
-    # segment atlas to single images
-    segmented_images = []
-    for r in range(0, int(rows / slice_size)):
-        for c in range(0, int(cols / slice_size)):
-            img = atlas[r * slice_size: r * slice_size + slice_size, c * slice_size: c * slice_size + slice_size]
-            segmented_images.append(img)
+        # create dataset
+        d = Dataset(file=filepath,
+                    target=target_name,
+                    slice_size=SLICE_SIZE,
+                    size_exponent=SIZE_EXPONENT)
+        d.load_dataset()
+        sets.append(d)
 
-    # define new size and resize images
-    new_size = (2 ** size_exponent, 2**size_exponent)
-    for i in range(0, len(segmented_images)):
-        # segmented_images[i] = transform.resize(segmented_images[i], new_size)
-        segmented_images[i] = misc.imresize(segmented_images[i], new_size)
+    return sets
 
-    ## return segmented image array
-    return segmented_images
+
+def load_samples(directory, size_exponent):
+    """
+    loads samples from directory
+    :param directory:
+    :return:
+    """
+    # get files in directory
+    files = [f for f in listdir(directory)]
+
+    print(files)
+    samples = []
+    for file in files:
+        filepath = path.join(directory, file)
+        img = io.imread(filepath, as_grey=True)
+        img = misc.imresize(img, (2**size_exponent, 2**size_exponent)) / 16
+        samples.append(img)
+
+    return np.asarray(samples)
 
 
 if __name__ == '__main__':

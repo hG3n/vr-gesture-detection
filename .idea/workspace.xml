@@ -2,15 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="53a92788-60b2-4359-ac80-973c9b539bbe" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/Dataset.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/ShapeDetector.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/__init__.py" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/circle.kra" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/data/circle.png" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/data/triangle.png" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/data/circle.jpeg" afterPath="$PROJECT_DIR$/data/datasets/circle_dataset.jpeg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/data/circle.kra" afterPath="$PROJECT_DIR$/data/krita_files/circle.kra" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/data/triangle.jpeg" afterPath="$PROJECT_DIR$/data/datasets/triangle_dataset.jpeg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.py" afterPath="$PROJECT_DIR$/main.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
