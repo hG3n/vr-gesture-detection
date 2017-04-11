@@ -46,7 +46,6 @@ class Dataset:
         self.images = images
         self.targets = image_targets
 
-
     def __str__(self):
         """
         overloaded print function

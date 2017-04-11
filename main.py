@@ -11,6 +11,7 @@ from lib.Dataset import Dataset
 SIZE_EXPONENT = 3
 SLICE_SIZE = 200
 
+
 def main():
     # load samples
     samples = load_samples("samples", SIZE_EXPONENT)
@@ -18,6 +19,7 @@ def main():
 
     # load datasets, learn, predict
     datasets = load_datasets("data/datasets")
+
     s = ShapeDetector(datasets)
     p = s.predict(samples_flattened)
 
@@ -35,20 +37,19 @@ def load_datasets(directory):
     :param directory:
     :return:
     """
-    files = [f for f in listdir(directory)]
+    # get dataset folders in base dir
+    basedir = [d for d in listdir(directory) if not path.isfile(d)]
 
-    # load file
+    # load files
     sets = []
-    for file in files:
-        # extract target name from file name
-        target_name = file.split("_")[0]
-        filepath = path.join(directory, file)
-
-        # create dataset
-        d = Dataset(file=filepath,
-                    target=target_name,
+    for folder in basedir:
+        # create path
+        dataset_path = path.join(directory, folder)
+        d = Dataset(data_path=dataset_path,
+                    target=folder,
                     slice_size=SLICE_SIZE,
                     size_exponent=SIZE_EXPONENT)
+
         d.load_dataset()
         sets.append(d)
 
@@ -64,12 +65,12 @@ def load_samples(directory, size_exponent):
     # get files in directory
     files = [f for f in listdir(directory)]
 
-    print(files)
+    # print(files)
     samples = []
     for file in files:
         filepath = path.join(directory, file)
         img = io.imread(filepath, as_grey=True)
-        img = misc.imresize(img, (2**size_exponent, 2**size_exponent)) / 16
+        img = misc.imresize(img, (2 ** size_exponent, 2 ** size_exponent)) / 16
         samples.append(img)
 
     return np.asarray(samples)
